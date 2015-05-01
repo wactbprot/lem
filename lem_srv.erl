@@ -8,26 +8,26 @@
 %%%-------------------------------------------------------------------
 -module(lem_srv).
 
+-include_lib("include/lem.hrl").
 -export([start/1]).
 
--ifndef(PRINT).
--define(PRINT(Var), io:format("debug: ~p line:~p var: ~p~n~n ~p~n~n", [?MODULE, ?LINE, ??Var, Var])).
--endif.
-
 start(Port) ->
-    spawn(fun () -> {ok, Sock} = gen_tcp:listen(Port, [{active, false}]), 
+    spawn(fun () -> {ok, Sock} = gen_tcp:listen(Port, [binary,{active, false}]), 
                     loop(Sock) end).
 
 loop(Sock) ->
     {ok, Conn} = gen_tcp:accept(Sock),
-    Handler = spawn(fun () -> handle(Conn, Sock) end),
+    Handler = spawn(fun () -> handle(Conn) end),
     gen_tcp:controlling_process(Conn, Handler),
     loop(Sock).
 
-handle(Conn, Sock) ->
-    {ok, Port} = inet:port(Sock),
-    ?PRINT(Port),
-    gen_tcp:send(Conn, response("Yo!\n")),
+handle(Conn) ->
+    {ok, Pack} = gen_tcp:recv(Conn, 0),
+    ?DEBUG(Pack),
+    ?DEBUG(is_binary(Pack)),
+    ?DEBUG(is_list(Pack)),
+
+    gen_tcp:send(Conn, response("{\"ok\":true}\n")),
     gen_tcp:close(Conn).
 
 response(Str) ->
