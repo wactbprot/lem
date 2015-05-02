@@ -10,7 +10,14 @@
 -export([dispatch/1]).
 
 dispatch(Pack) ->
-    {ok, Header, Remain} = erlang:decode_packet(http,Pack, []),
-    ?DEBUG(Header),
-    ?DEBUG(Remain).
+    {ok, Hhead, Rest} = erlang:decode_packet(http, Pack, []),
+    {ok, Htail} = resolve_rest(Rest, [Hhead]), 
+    ?DEBUG(Htail).
 
+resolve_rest(Rest, Acc) ->
+    case erlang:decode_packet(httph, Rest, []) of
+        {ok, H, R} -> 
+            ?DEBUG(H),
+            ?DEBUG(R),
+            resolve_rest(R,Acc)
+    end.
