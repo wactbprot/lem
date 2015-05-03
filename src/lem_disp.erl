@@ -15,9 +15,15 @@ dispatch(Pack) ->
     ?DEBUG(Htail).
 
 resolve_rest(Rest, Acc) ->
-    case erlang:decode_packet(httph, Rest, []) of
-        {ok, H, R} -> 
-            ?DEBUG(H),
-            ?DEBUG(R),
+    Res = erlang:decode_packet(httph, Rest, []),
+    ?DEBUG(Res),
+    case Res of
+        {ok,http_eoh,Body} ->
+            ?DEBUG(Body),
+            {ok, Acc};
+        {ok,{http_header,N,Key,_,Value}, R} -> 
+            ?DEBUG(N),
+            ?DEBUG(Key),
+            ?DEBUG(Value),
             resolve_rest(R,Acc)
     end.
