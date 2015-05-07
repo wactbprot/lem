@@ -6,14 +6,11 @@
 %%% @end
 %%% Created : 24 Apr 2015 by Wact B. Prot <wact@hiob>
 %%%-------------------------------------------------------------------
--module(lem_db).
+-module(db).
 -compile(export_all).
+-include_lib("../include/lem.hrl").
 
 -record(bucket,{path, value, atime}).
-
--ifndef(PRINT).
--define(PRINT(Var), io:format("DEBUG: ~p:~p - ~p~n~n ~p~n~n", [?MODULE, ?LINE, ??Var, Var])).
--endif.
 
 init() ->
     mnesia:create_schema([node()]),

@@ -6,7 +6,7 @@
 %%% @end
 %%% Created : 26 Apr 2015 by Wact B. Prot <wact@hiob>
 %%%-------------------------------------------------------------------
--module(lem_srv).
+-module(srv).
 -include_lib("../include/lem.hrl").
 -export([start/1]).
 
@@ -22,7 +22,7 @@ loop(Sock) ->
 
 handle(Conn) ->
     {ok, Pack} = gen_tcp:recv(Conn, 0),
-    lem_disp:dispatch(Pack),
+    disp:dispatch(Pack),
     gen_tcp:send(Conn, response("{\"ok\":true}\n")),
     gen_tcp:close(Conn).
 
