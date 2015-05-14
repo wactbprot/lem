@@ -15,14 +15,13 @@ dispatch(Pack) ->
     
     {ok, Htail} = resolve_rest(Rest, [{methode, Methode}
                                      ,{path, Path}
-                                     ]), 
-    ?DEBUG(Htail).
+                                     ]).
 
 resolve_rest(Rest, Acc) ->
     case erlang:decode_packet(httph, Rest, []) of
-        {ok,http_eoh,Body} ->
+        {ok, http_eoh, Body} ->
             {ok,[{body,Body}|Acc]};
         
-        {ok,{http_header,_,Key,_,Value}, R} -> 
-            resolve_rest(R,[{head_kv, Key,Value} | Acc])
+        {ok, {http_header, _, Key, _, Value}, R} -> 
+            resolve_rest(R, [{head_kv, Key, Value} | Acc])
     end.

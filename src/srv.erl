@@ -11,14 +11,18 @@
 -export([start/1]).
 
 start(Port) ->
-    spawn(fun () -> {ok, Sock} = gen_tcp:listen(Port, [binary,{active, false}]), 
-                    loop(Sock) end).
+    {ok, Sock} = gen_tcp:listen(Port, [binary,{active, false}]),
+    spawn(fun () -> accept(Sock) end).
 
-loop(Sock) ->
-    {ok, Conn} = gen_tcp:accept(Sock),
-    Handler = spawn(fun () -> handle(Conn) end),
-    gen_tcp:controlling_process(Conn, Handler),
-    loop(Sock).
+accept(Sock) ->
+    case gen_tcp:accept(Sock) of
+        {ok, Conn} ->
+            Handler = spawn(fun () -> handle(Conn) end),
+            gen_tcp:controlling_process(Conn, Handler),
+            accept(Sock);
+        {error, Reason} ->
+            io:fwrite("Error reason: ~p~n", [Reason])
+    end.
 
 handle(Conn) ->
     {ok, Pack} = gen_tcp:recv(Conn, 0),
