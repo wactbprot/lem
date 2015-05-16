@@ -12,3 +12,7 @@
 generate(Path, Value) ->
     ?DEBUG(Path),
     ?DEBUG(Value).
+
+gen_path(Path) ->
+    N = length(Path) -1,
+    
