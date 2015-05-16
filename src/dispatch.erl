@@ -17,14 +17,23 @@ resolve(Pack) ->
             ?DEBUG(Method),
             {ok, "something from ets"};
         'POST' ->
-            ?DEBUG(Method),
+            Result = resolve_rest(Rest, []),
+            case Result of
+                {ok, List} ->
+                    PathL  = get_path(Path),
+                    ValueL = get_value(List),
+                    store:generate(PathL, ValueL);
+                {error, Reason} ->
+                    {error, Reason}
+            end,
             {ok, "something from ets"};
         'PUT' ->
             ?DEBUG(Method),
-            resolve_rest(Rest, [{method, Method}
-                               ,{path, Path}
-                               ]);
-        Any ->
+            resolve_rest(Rest, []);
+        'DELETE' ->
+            ?DEBUG(Method),
+            {ok, "something from ets"};
+        _Any ->
             {error, 'Method not implemented'}
     end.
 
@@ -32,7 +41,15 @@ resolve_rest(Rest, Acc) ->
     case erlang:decode_packet(httph, Rest, []) of
         {ok, http_eoh, Body} ->
             {ok,[{body, Body}  |Acc]};
-        
         {ok, {http_header, _, Key, _, Value}, R} -> 
-            resolve_rest(R, [{head_kv, Key, Value} | Acc])
+            resolve_rest(R, [{head_kv, Key, Value} | Acc]);
+        {error, Reason} ->
+            {error, Reason}
     end.
+
+get_path(Path) ->
+    string:tokens(Path, ?PATHSEP).
+
+
+get_value(ResultL) ->
+    [Body || {body, Body} <- ResultL].
