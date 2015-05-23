@@ -19,30 +19,30 @@ init() ->
 gen_tbl(N) ->
     case N of
         1 ->
-            mnesia:create_table(bucket_a,
+            mnesia:create_table(table_a,
                                 [ {disc_copies, [node()] },
                                   {attributes,      
-                                   record_info(fields, bucket_a)} ]);
+                                   record_info(fields, table_a)} ]);
         2 ->
-            mnesia:create_table(bucket_b,
+            mnesia:create_table(table_b,
                                 [ {disc_copies, [node()] },
                                   {attributes,      
-                                   record_info(fields, bucket_b)} ]);
+                                   record_info(fields, table_b)} ]);
         3 ->
-            mnesia:create_table(bucket_c,
+            mnesia:create_table(table_c,
                                 [ {disc_copies, [node()] },
                                   {attributes,      
-                                   record_info(fields, bucket_c)} ]);
+                                   record_info(fields, table_c)} ]);
         4 ->
-            mnesia:create_table(bucket_d,
+            mnesia:create_table(table_d,
                                 [ {disc_copies, [node()] },
                                   {attributes,      
-                                   record_info(fields, bucket_d)}]);
+                                   record_info(fields, table_d)}]);
         5 ->
-            mnesia:create_table(bucket_e,
+            mnesia:create_table(table_e,
                                 [ {disc_copies, [node()] },
                                   {attributes,      
-                                   record_info(fields, bucket_e)} ]);
+                                   record_info(fields, table_e)} ]);
         _ -> 
             {error, "unvalid chain length"}
                 
@@ -52,7 +52,7 @@ gen_tbl(N) ->
 %     {Me,Se,Mi} = erlang:now(),
 %     F = fun() ->
 %                 mnesia:write(
-%                   #bucket{ path = Path,
+%                   #table{ path = Path,
 %                            value = Value, 
 %                            atime= Me*1000000 + Se*1000 + Mi}
 %                  )
@@ -61,7 +61,7 @@ gen_tbl(N) ->
 % 
 % select(Path) ->
 %     F = fun() ->
-%                 mnesia:read(bucket, Path)
+%                 mnesia:read(table, Path)
 %         end,
 %     {atomic, [Row]}=mnesia:transaction(F),
-%     io:format(" ~p ~p ~n ", [Row#bucket.value, Row#bucket.atime] ).
+%     io:format(" ~p ~p ~n ", [Row#table.value, Row#table.atime] ).
