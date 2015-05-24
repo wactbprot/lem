@@ -12,7 +12,6 @@
 
 start(Port) ->
     {ok, Sock} = gen_tcp:listen(Port, [binary,{active, false}]),
-    ?DEBUG(db:init()),
     spawn(fun () -> accept(Sock) end).
 
 accept(Sock) ->

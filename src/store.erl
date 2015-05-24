@@ -7,19 +7,46 @@
 
 -module(store).
 -include_lib("../include/lem.hrl").
--export([generate/2]).
+-export([ini/1, insert/2]).
 
-generate(Path, Value) ->
+%-module(ets_ex).
+%-export([run/0]).
+%
+%run() ->
+%    Parent = self(),
+%    spawn(fun() ->
+%                  TblName = my_table,
+%                  Tbl = ets:new(TblName, [public, named_table]),
+%                  Parent ! {ready, self(), TblName},
+%                  receive
+%                      stop ->
+%                          ets:delete(Tbl)
+%                  end
+%          end),
+%    receive
+%        {ready, Loop, TblNm} ->
+%            ets:insert(TblNm, {"key", "value"}),
+%            Lookup = ets:lookup(TblNm, "key"),
+%            io:format("lookup returned ~p~n", [Lookup]),
+%            Loop ! stop
+%    end. 
+
+
+
+ini(Path) ->
     [H|T] = Path,
-    TableId = list_to_atom(H),
+    Name = list_to_atom(H),
+    ets:new(Name, [public, named_table]),
+    ?DEBUG(ets:info(Name)).
+
+insert(Path, Value) ->
+    [H|T] = Path,
+    Name = list_to_atom(H),
     Atm     = gen_lvl_atm(length(T) - 1),
     Chain   = gen_chain(Atm, T),
-    ?DEBUG(T),
-    ?DEBUG(Atm),
-    ?DEBUG(Chain),
-    ?DEBUG(TableId),
-    ?DEBUG(Value).
-
+%    ?DEBUG(ets:insert(Name,list_to_tuple([{value,Value}|Chain]))).
+%    ?DEBUG(ets:insert(Name,list_to_tuple(Chain))).
+    ?DEBUG(ets:info(Name)).
 
 gen_lvl_atm(N) ->
     [list_to_atom("level_" ++ [I]) || I <- lists:seq(97, 97 + N)]. 

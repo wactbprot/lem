@@ -16,37 +16,6 @@ init() ->
     mnesia:create_schema([node()]),
     mnesia:start().
 
-gen_tbl(N) ->
-    case N of
-        1 ->
-            mnesia:create_table(table_a,
-                                [ {disc_copies, [node()] },
-                                  {attributes,      
-                                   record_info(fields, table_a)} ]);
-        2 ->
-            mnesia:create_table(table_b,
-                                [ {disc_copies, [node()] },
-                                  {attributes,      
-                                   record_info(fields, table_b)} ]);
-        3 ->
-            mnesia:create_table(table_c,
-                                [ {disc_copies, [node()] },
-                                  {attributes,      
-                                   record_info(fields, table_c)} ]);
-        4 ->
-            mnesia:create_table(table_d,
-                                [ {disc_copies, [node()] },
-                                  {attributes,      
-                                   record_info(fields, table_d)}]);
-        5 ->
-            mnesia:create_table(table_e,
-                                [ {disc_copies, [node()] },
-                                  {attributes,      
-                                   record_info(fields, table_e)} ]);
-        _ -> 
-            {error, "unvalid chain length"}
-                
-    end.
         
 % insert(Path, Value) ->
 %     {Me,Se,Mi} = erlang:now(),
