@@ -14,7 +14,7 @@ resolve(Pack) ->
     {http_request, Method, {abs_path, Path},_} = Hhead,
     case Method of
         'GET' ->
-            ?DEBUG(Method),
+            store:get(get_path(Path)),
             {ok, "something from ets"};
         'POST' ->
             Result = resolve_rest(Rest, []),

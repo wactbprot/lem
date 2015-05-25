@@ -7,7 +7,8 @@
 
 -module(store).
 -include_lib("../include/lem.hrl").
--export([ini/1, insert/2]).
+-export([ini/1, insert/2, get/1]).
+
 ini(Path) ->
     [H|_] = Path,
     Name = list_to_atom(H),
@@ -23,14 +24,22 @@ insert(Path, Value) ->
     Chain   = gen_chain(Atm, T),
     Name ! {insert,{row,list_to_tuple([{value,Value}|Chain])}}.
 
-loop(TblName) ->
+get(Path) ->
+    [H|_]   = Path,
+    Name    = list_to_atom(H),    
+    Name ! {lookup,{tag, level_a}}.
+
+
+
+loop(Table) ->
     receive
-        {insert,{row, Row}} -> 
-            ?DEBUG(Row),
-            ets:insert(TblName, Row),
-            ?DEBUG(ets:info(TblName)),
-            loop(TblName)
-        end.
+        {insert, {row, Row}} -> 
+            ets:insert(Table, Row),
+            loop(Table);
+        {lookup, {tag, Tag}} ->
+            ?DEBUG( ets:lookup(Table, Tag)),
+            loop(Table)
+    end.
 
 %ctrl(Path, Value) ->
 
