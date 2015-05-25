@@ -11,9 +11,9 @@
 ini(Path) ->
     [H|T] = Path,
     Name = list_to_atom(H),
-    register(tbl, spawn(fun() ->
-                                ets:new(mpid, [set, public, named_table]),
-                                ctrl(mpid)
+    register(Name, spawn(fun() ->
+                                ets:new(Name, [set, public, named_table]),
+                                ctrl(Name)
                         end)).
 
 insert(Path, Value) ->
@@ -34,8 +34,9 @@ ctrl(TblName) ->
 %%    ?DEBUG(ets:insert(Name,list_to_tuple(Chain))).
 %    ?DEBUG(ets:info(mpid)).
 %
-%gen_lvl_atm(N) ->
-%    [list_to_atom("level_" ++ [I]) || I <- lists:seq(97, 97 + N)]. 
-%
-%gen_chain(L,T) -> 
-%    lists:zip(L,T).
+
+gen_lvl_atm(N) ->
+    [list_to_atom("level_" ++ [I]) || I <- lists:seq(97, 97 + N)]. 
+
+gen_chain(L,T) -> 
+    lists:zip(L,T).
