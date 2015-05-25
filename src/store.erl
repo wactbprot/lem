@@ -9,28 +9,33 @@
 -include_lib("../include/lem.hrl").
 -export([ini/1, insert/2]).
 ini(Path) ->
-    [H|T] = Path,
+    [H|_] = Path,
     Name = list_to_atom(H),
     register(Name, spawn(fun() ->
                                 ets:new(Name, [set, public, named_table]),
-                                ctrl(Name)
+                                loop(Name)
                         end)).
 
 insert(Path, Value) ->
-    tbl ! {insert, {Path, Value}}.
+    [H|T]   = Path,
+    Name    = list_to_atom(H),    
+    Atm     = gen_lvl_atm(length(T) - 1),
+    Chain   = gen_chain(Atm, T),
+    Name ! {insert,{row,list_to_tuple([{value,Value}|Chain])}}.
 
-ctrl(TblName) ->
+loop(TblName) ->
     receive
-        {insert, _} -> 
-            ?DEBUG(ets:info(TblName))
+        {insert,{row, Row}} -> 
+            ?DEBUG(Row),
+            ets:insert(TblName, Row),
+            ?DEBUG(ets:info(TblName)),
+            loop(TblName)
         end.
 
 %ctrl(Path, Value) ->
-%    [H|T] = Path,
-%    Name = list_to_atom(H),
-%    Atm     = gen_lvl_atm(length(T) - 1),
-%    Chain   = gen_chain(Atm, T),
-%%    ?DEBUG(ets:insert(Name,list_to_tuple([{value,Value}|Chain]))).
+
+%   
+%     ?DEBUG(ets:insert(Name,list_to_tuple([{value,Value}|Chain]))).
 %%    ?DEBUG(ets:insert(Name,list_to_tuple(Chain))).
 %    ?DEBUG(ets:info(mpid)).
 %
