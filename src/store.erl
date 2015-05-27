@@ -13,8 +13,8 @@ ini(Path) ->
     [H|_] = Path,
     Name = list_to_atom(H),
     register(Name, spawn(fun() ->
-                               Table =  ets:new(Name, [bag, public, named_table]),
-                                loop(Table)
+                               ets:new(Name, [bag, public, named_table]),
+                                loop(Name)
                         end)).
 
 insert(Path, Value) ->
@@ -29,14 +29,12 @@ get(Path) ->
     Name    = list_to_atom(H),    
     Name ! {lookup,{tag, level_a}}.
 
-
-
 loop(Table) ->
     receive
         {insert, {row, Row}} -> 
             ets:insert(Table, Row),
             loop(Table);
-        {lookup, {tag, Tag}} ->
+        {lookup, {tag, _Tag}} ->
             ?DEBUG( ets:tab2list(Table)),
             loop(Table)
     end.

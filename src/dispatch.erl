@@ -20,22 +20,18 @@ resolve(Pack) ->
             Result = resolve_rest(Rest, []),
             case Result of
                 {ok, _} ->
-                    store:ini(get_path(Path));
-                {error, Reason} ->
-                    {error, Reason}
-            end,
+                    store:ini(get_path(Path))
+                end,
             {ok, "something from ets"};
         'PUT' ->
             Result = resolve_rest(Rest, []),
             case Result of
                 {ok, List} ->
-                    store:insert(get_path(Path), get_value(List));
-                {error, Reason} ->
-                    {error, Reason}
+                    store:insert(get_path(Path), get_value(List))
             end,
             {ok, "something from ets"};
-            'DELETE' ->
-                      ?DEBUG(Method),
+        'DELETE' ->
+            ?DEBUG(Method),
             {ok, "something from ets"};
         _Any ->
             {error, 'Method not implemented'}
